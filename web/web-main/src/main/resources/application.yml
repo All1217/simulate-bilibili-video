@@ -34,7 +34,7 @@ mybatis-plus:
 
 video:
   alioss:
-    endpoint: oss-cn-hangzhou.aliyuncs.com
-    access-key-id: LTAI5tRWkk5pQZfCqGvvyrfi
-    access-key-secret: BgrXg2xNukhKZeSczwoQCYMV9DYi1H
-    bucket-name: morton321
+    endpoint: 
+    access-key-id: 
+    access-key-secret: 
+    bucket-name: 
