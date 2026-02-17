@@ -122,6 +122,9 @@ public class DataCenterServiceImpl implements DataCenterService {
         List<HotSearch> res = new ArrayList<>();
         Map<String, Object> json = (Map<String, Object>) redisTemplate.opsForValue().get(Constant.MAIN_HOT_SEARCH);
         try {
+            if (json == null) {
+                return res;
+            }
             log.info("result: {}", (List<HotSearch>) json.get("list"));
             if (json != null) {
                 res = (List<HotSearch>) json.get("list");

@@ -1,11 +1,11 @@
 package com.video.web.main.service;
 
+import com.video.common.result.Result;
 import com.video.model.entity.UserInfo;
 import com.video.model.entity.UserStats;
-import com.video.web.main.vo.RegisterVo;
-import com.video.web.main.vo.UserInfoQueryVo;
-import com.video.web.main.vo.UserStatsQueryVo;
-import com.video.web.main.vo.UserVo;
+import com.video.web.main.vo.*;
+
+import java.util.List;
 
 public interface UserInfoService {
     UserInfo getById(Long id);
@@ -25,4 +25,6 @@ public interface UserInfoService {
     UserVo getUserVoByUid(UserInfoQueryVo queryVo);
 
     void updateAvatar(UserInfoQueryVo queryVo);
+
+    Result<List<UserInfo>> getSimilarUsers(List<Long> uids);
 }

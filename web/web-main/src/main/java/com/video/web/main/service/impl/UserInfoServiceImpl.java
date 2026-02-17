@@ -1,5 +1,7 @@
 package com.video.web.main.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.video.common.result.Result;
 import com.video.common.utils.NormalUtil;
 import com.video.model.entity.Favorite;
 import com.video.model.entity.UserInfo;
@@ -7,10 +9,7 @@ import com.video.model.entity.UserStats;
 import com.video.web.main.mapper.UserInfoMapper;
 import com.video.web.main.service.FavoriteService;
 import com.video.web.main.service.UserInfoService;
-import com.video.web.main.vo.RegisterVo;
-import com.video.web.main.vo.UserInfoQueryVo;
-import com.video.web.main.vo.UserStatsQueryVo;
-import com.video.web.main.vo.UserVo;
+import com.video.web.main.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
-public class UserInfoServiceImpl implements UserInfoService {
+public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserInfoService {
     @Autowired
     private UserInfoMapper uiMapper;
     @Autowired
@@ -140,5 +140,12 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setUid(queryVo.getUid());
         userInfo.setAvatar(queryVo.getAvatar());
         uiMapper.updateUserInfo(userInfo);
+    }
+
+    @Override
+    public Result<List<UserInfo>> getSimilarUsers(List<Long> uids) {
+        return Result.ok(lambdaQuery()
+                .in(UserInfo::getUid, uids)
+                .list());
     }
 }

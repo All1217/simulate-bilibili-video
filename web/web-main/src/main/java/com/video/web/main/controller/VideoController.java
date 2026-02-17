@@ -7,7 +7,7 @@ import com.video.model.entity.UserVideo;
 import com.video.model.entity.Video;
 import com.video.model.entity.VideoStats;
 import com.video.web.main.service.VideoService;
-import com.video.web.main.vo.RecoQueryVo;
+import com.video.web.main.vo.RecQueryVo;
 import com.video.web.main.vo.UserVideoQueryVo;
 import com.video.web.main.vo.VideoQueryVo;
 import com.video.web.main.vo.VideoVo;
@@ -98,7 +98,7 @@ public class VideoController {
 
     @Operation(summary = "获取实时推荐列表")
     @GetMapping("/getRealTimeRecommend")
-    public Result<List<VideoVo>> getRealTimeRecommend(RecoQueryVo queryVo) {
+    public Result<List<VideoVo>> getRealTimeRecommend(RecQueryVo queryVo) {
         // 向 Flask 服务发送 GET 请求，返回的视频 ID 列表
         String url = "http://localhost:5000/recommendations/" + queryVo.getUid() + "?count=" + queryVo.getCount();
         List<Long> videoIds = restTemplate.getForObject(url, List.class);

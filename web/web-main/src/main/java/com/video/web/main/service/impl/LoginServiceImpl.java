@@ -11,6 +11,7 @@ import com.video.web.main.mapper.UserInfoMapper;
 import com.video.web.main.service.LoginService;
 import com.video.web.main.vo.LoginVo;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 //import org.apache.commons.codec.digest.DigestUtils;
 
@@ -25,6 +28,9 @@ import java.util.Objects;
 public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserInfoMapper userInfoMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     @Override
     public String login(LoginVo loginVo) {
         //校验用户是否存在
@@ -42,6 +48,11 @@ public class LoginServiceImpl implements LoginService {
         if (!user.getPassword().equals(DigestUtils.md5Hex(loginVo.getPassword()))) {
             throw new VideoException(ResultCodeEnum.ADMIN_ACCOUNT_ERROR);
         }
+        //发消息请求构建用户画像
+        Map<String, Object> msg = new HashMap<>(2);
+        msg.put("uid", user.getUid().toString());//python那边没法解析java的包装类Long
+        msg.put("timestamp", System.currentTimeMillis());
+        rabbitTemplate.convertAndSend("userProfile.exchange", "userProfile", msg);
         //创建并返回TOKEN
         return JwtUtil.createToken(user.getUid(), user.getUsername());
     }
@@ -56,10 +67,10 @@ public class LoginServiceImpl implements LoginService {
         try {
             InetAddress candidateAddress = null;
             // 遍历所有的网络接口
-            for (Enumeration ifaces = NetworkInterface.getNetworkInterfaces(); ifaces.hasMoreElements();) {
+            for (Enumeration ifaces = NetworkInterface.getNetworkInterfaces(); ifaces.hasMoreElements(); ) {
                 NetworkInterface iface = (NetworkInterface) ifaces.nextElement();
                 // 在所有的接口下再遍历IP
-                for (Enumeration inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements();) {
+                for (Enumeration inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements(); ) {
                     InetAddress inetAddr = (InetAddress) inetAddrs.nextElement();
                     if (!inetAddr.isLoopbackAddress()) {// 排除loopback类型地址
                         if (inetAddr.isSiteLocalAddress()) {
