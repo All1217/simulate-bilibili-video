@@ -8,13 +8,13 @@ import com.video.web.main.service.DanmuService;
 import com.video.web.main.service.UserInfoService;
 import com.video.web.main.service.UserTagService;
 import com.video.web.main.vo.RecQueryVo;
-import com.video.web.main.vo.VideoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.video.common.result.ResultCodeEnum.APP_SERVER_ERROR;
@@ -61,9 +61,15 @@ public class DanmuContorller {
         return userInfoService.getSimilarUsers(uids);
     }
 
-    @Operation(summary = "根据用户标签过滤用户")
-    @GetMapping("/filterUserByTags")
-    public Result<List<Long>> filterUserByTags(RecQueryVo queryVo) {
-        return userTagService.filterUserByTags(queryVo);
+    @Operation(summary = "根据指定标签过滤弹幕")
+    @PostMapping("/filterUserByTags")
+    public Result<List<Danmu>> filterUserByTags(@RequestBody RecQueryVo queryVo) {
+        return danmuService.filterUserByTags(queryVo);
+    }
+
+    @Operation(summary = "根据指定标签过滤弹幕")
+    @GetMapping("/getCommonTags")
+    public Result<List<String>> getCommonTags(RecQueryVo queryVo) {
+        return userTagService.getCommonTags(queryVo);
     }
 }

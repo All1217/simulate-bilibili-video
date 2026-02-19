@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -144,8 +145,10 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Override
     public Result<List<UserInfo>> getSimilarUsers(List<Long> uids) {
-        return Result.ok(lambdaQuery()
+        List<UserInfo> res = lambdaQuery()
                 .in(UserInfo::getUid, uids)
-                .list());
+                .list();
+        Collections.reverse(res);
+        return Result.ok(res);
     }
 }

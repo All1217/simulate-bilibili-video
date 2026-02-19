@@ -1,4 +1,4 @@
-package com.video.web.main.ws;
+package com.video.web.main.websocket;
 
 import com.alibaba.fastjson.JSON;
 import com.video.model.entity.ChatOnlineMessage;

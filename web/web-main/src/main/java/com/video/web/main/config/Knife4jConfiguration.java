@@ -65,6 +65,16 @@ public class Knife4jConfiguration {
     }
 
     @Bean
+    public GroupedOpenApi danmuAPI() {
+
+        return GroupedOpenApi.builder().group("弹幕相关").
+                pathsToMatch(
+                        "/main/danmu/getSimilarUsers",
+                        "/main/danmu/filterUserByTags"
+                ).build();
+    }
+
+    @Bean
     public GroupedOpenApi fansAPI() {
 
         return GroupedOpenApi.builder().group("粉丝管理相关").

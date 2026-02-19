@@ -6,5 +6,6 @@ import com.video.web.main.vo.RecQueryVo;
 import java.util.List;
 
 public interface UserTagService {
-    Result<List<Long>> filterUserByTags(RecQueryVo queryVo);
+
+    Result<List<String>> getCommonTags(RecQueryVo queryVo);
 }

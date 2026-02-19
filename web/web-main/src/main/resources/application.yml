@@ -44,4 +44,5 @@ video:
     accessKey: minioadmin
     secretKey: minioadmin
 
-
+netty:
+  port: 5051

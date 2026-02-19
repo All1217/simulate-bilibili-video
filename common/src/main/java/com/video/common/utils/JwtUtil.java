@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Slf4j
 public class JwtUtil {
-    private final static long tokenExpiration = 60 * 60 * 1000 * 6L;
+    private final static long tokenExpiration = 60 * 60 * 1000 * 6L;//单位是毫秒
     private static SecretKey tokenSignKey = Keys.hmacShaKeyFor("M0PKKI6pYGVWWfDZw90a0lTpGYX1d4AQ".getBytes());
 
     public static String createToken(Long userId, String username) {
@@ -44,6 +44,7 @@ public class JwtUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(createToken(1L, "138888888"));
+//        System.out.println(createToken(1L, "138888888"));
+        System.out.println(parseToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVU0VSX0lORk8iLCJleHAiOjE3OTI5MDkxMDcsInVzZXJJZCI6MSwidXNlcm5hbWUiOiIxMzg4ODg4ODgifQ.iUtHw-QkAVt09TP61uv1zY1nQZ_HczAzXbsdFA0raBQ"));
     }
 }
