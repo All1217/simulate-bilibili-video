@@ -20,7 +20,7 @@ public class UserInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "用户唯一标识")
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.INPUT)
     private Long uid;
 
     @Schema(description = "账号，暂时设置为与uid等同")

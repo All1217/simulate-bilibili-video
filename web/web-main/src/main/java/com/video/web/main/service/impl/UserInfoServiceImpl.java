@@ -1,7 +1,9 @@
 package com.video.web.main.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.video.common.exception.VideoException;
 import com.video.common.result.Result;
+import com.video.common.utils.CodeUtil;
 import com.video.common.utils.NormalUtil;
 import com.video.model.entity.Favorite;
 import com.video.model.entity.UserInfo;
@@ -12,6 +14,8 @@ import com.video.web.main.service.UserInfoService;
 import com.video.web.main.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundValueOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
@@ -19,6 +23,11 @@ import org.springframework.util.DigestUtils;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
+import static com.video.common.constant.Constant.UNIQUE_UID_KEY;
+import static com.video.common.result.ResultCodeEnum.APP_SERVER_ERROR;
+import static com.video.common.result.ResultCodeEnum.NORMAL_PARAM_ERROR;
 
 @Service
 @Slf4j
@@ -27,27 +36,42 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     private UserInfoMapper uiMapper;
     @Autowired
     private FavoriteService favoriteService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    private final BoundValueOperations<String, String> serialOps;
+
+    public UserInfoServiceImpl(StringRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.serialOps = redisTemplate.boundValueOps(UNIQUE_UID_KEY);
+    }
 
     @Override
     public UserInfo getById(Long id) {
         return uiMapper.selectOneByUsername(id.toString());
     }
 
+    /**
+     * 注册业务逻辑
+     */
     @Override
     @Transactional
     public String insertOne(RegisterVo registerVo) {
-        //初始化用户基本信息
-        long temp = NormalUtil.randomUid();
-        while (true) {
-            UserInfo tempUser = uiMapper.selectOneByUsername(temp + "");
-            if (tempUser == null) {
-                break;
-            }
-            temp = NormalUtil.randomUid();
+        if (registerVo.getNickname().length() > 15) {
+            throw new VideoException(NORMAL_PARAM_ERROR.getCode(), "昵称不能超过15个字符");
         }
+        UserInfo temp = lambdaQuery().eq(UserInfo::getNickname, registerVo.getNickname()).one();
+        if (temp != null) {
+            throw new VideoException(NORMAL_PARAM_ERROR.getCode(), "用户名已存在！");
+        }
+        //生成UID
+        Long sequence = serialOps.increment(1);
+        if (sequence == null) {
+            throw new VideoException(APP_SERVER_ERROR.getCode(), "服务器异常：生成自增序列号失败！");
+        }
+        Long uid = CodeUtil.geneVisibleCode(sequence, sequence);
         UserInfo userInfo = new UserInfo();
-        userInfo.setUid(temp);
-        userInfo.setUsername(temp + "");
+        userInfo.setUid(uid);
+        userInfo.setUsername("" + uid);
         userInfo.setAvatar("https://morton321.oss-cn-hangzhou.aliyuncs.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-02-11%20232613.png");
         userInfo.setNickname(registerVo.getNickname());
         userInfo.setPassword(DigestUtils.md5DigestAsHex(registerVo.getPassword().getBytes()));
@@ -55,17 +79,17 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         uiMapper.insert(userInfo);
         //初始化用户额外数据
         UserStats userStats = new UserStats();
-        userStats.setUid(temp);
+        userStats.setUid(uid);
         uiMapper.inserUserStats(userStats);
         //初始化收藏夹
         Favorite tf = new Favorite();
         tf.setType(1);
         tf.setTitle("默认收藏夹");
         tf.setDescription("默认收藏夹");
-        tf.setUid(temp);
+        tf.setUid(uid);
         tf.setVisible(1);
         favoriteService.insertOne(tf);
-        return "" + temp;
+        return registerVo.getNickname();
     }
 
     @Override
@@ -91,7 +115,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Override
     @Transactional
-    public void updateUserStats(Long uid){
+    public void updateUserStats(Long uid) {
         long fansCount = uiMapper.calFansCount(uid);
         int followCount = uiMapper.calFollowCount(uid);
         long likeCount = uiMapper.calLikeCount(uid);

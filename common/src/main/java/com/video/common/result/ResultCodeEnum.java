@@ -28,6 +28,8 @@ public enum ResultCodeEnum {
     ADMIN_ACCESS_FORBIDDEN(309, "无访问权限"),
     ADMIN_ACCOUNT_LOGOUT_ERROR(310, "该账号已注销"),
 
+    NORMAL_PARAM_ERROR(404, "参数不正确"),
+
     APP_SERVER_ERROR(500, "服务器异常"),
     APP_LOGIN_AUTH(501, "未登陆"),
     APP_LOGIN_PHONE_EMPTY(502, "手机号码为空"),

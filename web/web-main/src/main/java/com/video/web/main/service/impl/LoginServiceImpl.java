@@ -34,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String login(LoginVo loginVo) {
         //校验用户是否存在
-        UserInfo user = userInfoMapper.selectOneByUsername(loginVo.getUsername());
+        UserInfo user = userInfoMapper.loginOneByNickname(loginVo.getUsername());
         if (user == null) {
             throw new VideoException(ResultCodeEnum.ADMIN_ACCOUNT_NOT_EXIST_ERROR);
         }

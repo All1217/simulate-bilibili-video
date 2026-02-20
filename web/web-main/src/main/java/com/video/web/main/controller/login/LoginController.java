@@ -35,10 +35,10 @@ public class LoginController {
         return Result.ok(userInfo);
     }
 
-    @Operation(summary = "获取服务器本机IP地址")
-    @GetMapping("login/public/getIP")
-    public Result<String> getIP() throws UnknownHostException {
-        InetAddress res = service.getIP();
-        return Result.ok(res.getHostAddress());
-    }
+//    @Operation(summary = "获取服务器本机IP地址")
+//    @GetMapping("login/public/getIP")
+//    public Result<String> getIP() throws UnknownHostException {
+//        InetAddress res = service.getIP();
+//        return Result.ok(res.getHostAddress());
+//    }
 }
