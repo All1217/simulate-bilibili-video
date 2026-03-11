@@ -34,6 +34,6 @@ public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
     UserVo getUserVoByUid(UserInfoQueryVo queryVo);
 
-    @Select("select uid, username, nickname, password, status from user where nickname = #{username}")
+    @Select("select uid, username, nickname, password, status from user where username = #{username}")
     UserInfo loginOneByNickname(String username);
 }

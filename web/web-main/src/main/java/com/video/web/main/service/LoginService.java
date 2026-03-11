@@ -10,6 +10,4 @@ public interface LoginService {
     String login(LoginVo loginVo);
 
     UserInfo getLoginUserInfo(Long userId);
-
-    InetAddress getIP() throws UnknownHostException;
 }

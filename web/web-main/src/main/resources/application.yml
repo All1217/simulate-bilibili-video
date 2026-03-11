@@ -5,9 +5,9 @@ server:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/video?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2b8
-    username: root
-    password: 123456
+    url: ${ANILINK_MYSQL_URL}
+    username: ${ANILINK_MYSQL_USER}
+    password: ${ANILINK_MYSQL_PASS}
     hikari:
       connection-test-query: SELECT 1 # 自动检测连接
       connection-timeout: 60000 #数据库连接超时时间,默认30秒
@@ -22,16 +22,16 @@ spring:
       max-request-size: 1024MB
   data:
     redis:
-      host: 192.168.150.102
+      host: ${CENTOS7_IP}
       port: 6379
-      password: 123456
+      password: ${ANILINK_REDIS_PASS}
       database: 5
   rabbitmq:
-    host: 192.168.150.102
+    host: ${CENTOS7_IP}
     port: 5672
     virtual-host: AniLink
-    username: admin
-    password: admin123
+    username: ${ANILINK_RABBITMQ_USER}
+    password: ${ANILINK_RABBITMQ_PASS}
 
 #用于打印框架生成的sql语句，便于调试
 mybatis-plus:
@@ -43,9 +43,9 @@ logging:
 
 video:
   minio:
-    endpoint: http://192.168.150.102:9000
-    accessKey: minioadmin
-    secretKey: minioadmin
+    endpoint: ${MINIO_ENDPOINT}
+    accessKey: ${MINIO_ACCESSKEY}
+    secretKey: ${MINIO_SECRETKEY}
 
 netty:
   port: 5051

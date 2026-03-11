@@ -19,6 +19,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .excludePathPatterns("/main/user/register")
                 .excludePathPatterns("/main/video/home/**")
                 .excludePathPatterns("/main/**/public/**")
+                .excludePathPatterns("/main/file/upload/avatar/test")
         ;
     }
 }

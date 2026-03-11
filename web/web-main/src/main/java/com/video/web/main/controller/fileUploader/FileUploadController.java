@@ -55,4 +55,13 @@ public class FileUploadController {
         videoService.insertOne(video);
         return Result.ok();
     }
+
+    /**
+     * 测试专用
+    * */
+    @Operation(summary = "上传图片")
+    @PostMapping("upload/avatar/test")
+    public Result uploadAvatarTest(@RequestParam MultipartFile file) throws IOException {
+        return fileService.uploadAvatar(file);
+    }
 }

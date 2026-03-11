@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.video.common.constant.Constant.UNIQUE_UID_KEY;
+import static com.video.common.constant.MinioConstant.DEFAULT_AVATAR;
 import static com.video.common.result.ResultCodeEnum.APP_SERVER_ERROR;
 import static com.video.common.result.ResultCodeEnum.NORMAL_PARAM_ERROR;
 
@@ -56,13 +57,6 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     @Override
     @Transactional
     public String insertOne(RegisterVo registerVo) {
-        if (registerVo.getNickname().length() > 15) {
-            throw new VideoException(NORMAL_PARAM_ERROR.getCode(), "昵称不能超过15个字符");
-        }
-        UserInfo temp = lambdaQuery().eq(UserInfo::getNickname, registerVo.getNickname()).one();
-        if (temp != null) {
-            throw new VideoException(NORMAL_PARAM_ERROR.getCode(), "用户名已存在！");
-        }
         //生成UID
         Long sequence = serialOps.increment(1);
         if (sequence == null) {
@@ -72,7 +66,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         UserInfo userInfo = new UserInfo();
         userInfo.setUid(uid);
         userInfo.setUsername("" + uid);
-        userInfo.setAvatar("https://morton321.oss-cn-hangzhou.aliyuncs.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-02-11%20232613.png");
+        userInfo.setAvatar(DEFAULT_AVATAR);
         userInfo.setNickname(registerVo.getNickname());
         userInfo.setPassword(DigestUtils.md5DigestAsHex(registerVo.getPassword().getBytes()));
         userInfo.setCreateDate(new Date());
@@ -89,7 +83,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         tf.setUid(uid);
         tf.setVisible(1);
         favoriteService.insertOne(tf);
-        return registerVo.getNickname();
+        return "" + uid;
     }
 
     @Override
